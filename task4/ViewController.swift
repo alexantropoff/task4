@@ -13,12 +13,8 @@ class ViewController: UIViewController {
             hasher.combine(title)
         }
     }
-    enum ViewControllerSection: Hashable{
-        case main
-    }
     
     var tableView = UITableView(frame: .zero,style: .insetGrouped)
-    
     var data = [Item]()
     
     override func viewDidLoad() {
@@ -41,12 +37,8 @@ class ViewController: UIViewController {
         navigationItem.title = "Task 4"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(shuffleButtonTapped))
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        //tableView.dataSource = self
-        var snap = NSDiffableDataSourceSnapshot<Int,Item>()
-        snap.appendSections([0])
-        snap.appendItems(data)
-        self.datasource.apply(snap, animatingDifferences: true)
         tableView.delegate = self
+        makeSnapshot()
         view.addSubview(tableView)
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -57,29 +49,31 @@ class ViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-    
+    func makeSnapshot(){
+        var snap = NSDiffableDataSourceSnapshot<Int,Item>()
+        snap.appendSections([0])
+        snap.appendItems(data)
+        self.datasource.apply(snap, animatingDifferences: true)
+        
+    }
     @objc func shuffleButtonTapped(_ sender: Any) {
         data.shuffle()
-        tableView.reloadData()
+        makeSnapshot()
     }
 }
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         data[indexPath.row].isSelected.toggle()
         if(data[indexPath.row].isSelected) {
             let selectedData = data[indexPath.row]
-            data.remove(at: indexPath.row)
-            data.insert(selectedData, at: 0)
-            tableView.reloadData()
-        }else{
-            //tableView.reloadRows(at: [indexPath], with: .automatic)
-            tableView.reloadData()
+            if(indexPath.row != 0){
+                print(indexPath.row)
+                data.remove(at: indexPath.row)
+                data.insert(selectedData, at: 0)
+            }
         }
-    }
-    
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        makeSnapshot()
     }
     
 }
