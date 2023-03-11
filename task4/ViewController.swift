@@ -18,7 +18,7 @@ class ViewController: UIViewController {
             hasher.combine(id)
         }
         static func == (lhs: Item, rhs: Item) -> Bool {
-                lhs.id == rhs.id
+            lhs.id == rhs.id
         }
     }
     
@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         let cell = tv.dequeueReusableCell(withIdentifier: "cell", for: ip)
         cell.textLabel!.text = self.data[ip.row].title
         cell.accessoryType = self.data[ip.row].isSelected ? .checkmark: .none
-       // print("\(self.data[ip.row].title) \(self.data[ip.row].isSelected)")
+        // print("\(self.data[ip.row].title) \(self.data[ip.row].isSelected)")
         return cell
     }
     override func viewWillLayoutSubviews() {
