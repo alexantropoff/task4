@@ -13,6 +13,9 @@ class ViewController: UIViewController {
             hasher.combine(title)
         }
     }
+    enum ViewControllerSection: Hashable{
+        case main
+    }
     
     var tableView = UITableView(frame: .zero,style: .insetGrouped)
     
@@ -25,12 +28,24 @@ class ViewController: UIViewController {
             data.append(item)
         }
     }
+    lazy var datasource : UITableViewDiffableDataSource<Int,Item> =
+    UITableViewDiffableDataSource(tableView: self.tableView) {
+        tv,ip,item in
+        let cell = tv.dequeueReusableCell(withIdentifier: "cell", for: ip)
+        cell.textLabel!.text = self.data[ip.row].title
+        cell.accessoryType = self.data[ip.row].isSelected ? .checkmark: .none
+        return cell
+    }
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         navigationItem.title = "Task 4"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(shuffleButtonTapped))
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.dataSource = self
+        //tableView.dataSource = self
+        var snap = NSDiffableDataSourceSnapshot<Int,Item>()
+        snap.appendSections([0])
+        snap.appendItems(data)
+        self.datasource.apply(snap, animatingDifferences: true)
         tableView.delegate = self
         view.addSubview(tableView)
         
@@ -59,30 +74,12 @@ extension ViewController: UITableViewDelegate {
             data.insert(selectedData, at: 0)
             tableView.reloadData()
         }else{
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+            //tableView.reloadRows(at: [indexPath], with: .automatic)
+            tableView.reloadData()
         }
     }
     
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
     }
     
-}
-
-extension ViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = data[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = item.title
-        if(item.isSelected){
-            cell.accessoryType = .checkmark
-        }else{
-            cell.accessoryType = .none
-        }
-        return cell
-        
-    }
 }
