@@ -11,6 +11,7 @@ class ViewController: UIViewController {
         var isSelected: Bool
         func hash(into hasher: inout Hasher) {
             hasher.combine(title)
+            hasher.combine(isSelected)
         }
     }
     
@@ -64,6 +65,7 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         data[indexPath.row].isSelected.toggle()
         if(data[indexPath.row].isSelected) {
             let selectedData = data[indexPath.row]
