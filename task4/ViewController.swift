@@ -5,10 +5,13 @@
 //
 
 import UIKit
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    struct Item {
+class ViewController: UIViewController {
+    struct Item : Hashable {
         var title: String
         var isSelected: Bool
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(title)
+        }
     }
     
     var tableView = UITableView(frame: .zero,style: .insetGrouped)
@@ -24,7 +27,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        //view.backgroundColor = .white
         navigationItem.title = "Task 4"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(shuffleButtonTapped))
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,6 +42,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    @objc func shuffleButtonTapped(_ sender: Any) {
+        data.shuffle()
+        tableView.reloadData()
+    }
+}
+
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
     }
@@ -72,8 +82,4 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
     }
     
-    @objc func shuffleButtonTapped(_ sender: Any) {
-        data.shuffle()
-        tableView.reloadData()
-    }
 }
