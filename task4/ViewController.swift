@@ -11,7 +11,6 @@ class ViewController: UIViewController {
         var isSelected: Bool
         func hash(into hasher: inout Hasher) {
             hasher.combine(title)
-            hasher.combine(isSelected)
         }
     }
     
@@ -68,9 +67,9 @@ extension ViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: false)
         data[indexPath.row].isSelected.toggle()
         if(data[indexPath.row].isSelected) {
-            let selectedData = data[indexPath.row]
             if(indexPath.row != 0){
                 print(indexPath.row)
+                let selectedData = data[indexPath.row]
                 data.remove(at: indexPath.row)
                 data.insert(selectedData, at: 0)
             }
