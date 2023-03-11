@@ -18,9 +18,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         for i in 0..<30 {
-            let title = "\(i)"
-            let isSelected = false
-            let item = Item(title: title, isSelected: isSelected)
+            let item = Item(title: "\(i)", isSelected: false)
             data.append(item)
         }
     }
@@ -35,7 +33,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         view.addSubview(tableView)
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.layer.cornerRadius=8
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
