@@ -6,11 +6,19 @@
 
 import UIKit
 class ViewController: UIViewController {
-    struct Item : Hashable {
+    class Item : Hashable {
+        let id = UUID()
         var title: String
         var isSelected: Bool
+        init(title: String, isSelected: Bool){
+            self.title = title
+            self.isSelected = isSelected
+        }
         func hash(into hasher: inout Hasher) {
-            hasher.combine(title)
+            hasher.combine(id)
+        }
+        static func == (lhs: Item, rhs: Item) -> Bool {
+                lhs.id == rhs.id
         }
     }
     
@@ -30,6 +38,7 @@ class ViewController: UIViewController {
         let cell = tv.dequeueReusableCell(withIdentifier: "cell", for: ip)
         cell.textLabel!.text = self.data[ip.row].title
         cell.accessoryType = self.data[ip.row].isSelected ? .checkmark: .none
+       // print("\(self.data[ip.row].title) \(self.data[ip.row].isSelected)")
         return cell
     }
     override func viewWillLayoutSubviews() {
@@ -66,15 +75,19 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         data[indexPath.row].isSelected.toggle()
+        var snap = datasource.snapshot()
+        snap.reloadItems([data[indexPath.row]])
         if(data[indexPath.row].isSelected) {
             if(indexPath.row != 0){
-                print(indexPath.row)
+                snap.moveItem(data[indexPath.row], beforeItem: data[0])
+                datasource.apply(snap, animatingDifferences: true)
                 let selectedData = data[indexPath.row]
                 data.remove(at: indexPath.row)
                 data.insert(selectedData, at: 0)
             }
+            
         }
-        makeSnapshot()
+        datasource.apply(snap, animatingDifferences: true)
     }
     
 }
